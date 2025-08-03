@@ -1,10 +1,9 @@
-# 🖨️ SCRIBD DOM Helper – Chrome Extension
+# SCRIBD – Chrome Extension
 
 A powerful Chrome extension crafted to enhance your experience on content-heavy platforms like **Scribd**, **Studocu**, and similar document-based websites. This tool simplifies content interaction by offering two key features:
 
-## 📹 Demo Video
-
-[![Watch the Demo](https://img.youtube.com/vi/K-BKsvsC8Ek/0.jpg)](https://www.youtube.com/watch?v=K-BKsvsC8Ek)
+🎥 **Watch the demo on Google Drive:**  
+👉 [Click here to view the video](https://drive.google.com/file/d/1zKndlHT8PBbQ1_en41Uh4FOk4SVFxA0K/view?usp=sharing)
 
 
 - 🖨️ **Print Cleaner Pages**
