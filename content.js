@@ -1,4 +1,5 @@
 const apply_btn = document.getElementById("apply_btn");
+
 apply_btn.addEventListener("click", async () => {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
@@ -48,35 +49,27 @@ function applyPrintStylesAndPrint() {
 
 function unblurDocument() {
     try {
-        if (window.DocumentManager?.prototype?.removeBlurring) {
-            console.log("[Extension] Native removeBlurring()");
-            const docManager = new window.DocumentManager();
-            docManager.removeBlurring();
-        } else if (typeof window.removeBlurring === "function") {
-            console.log("[Extension] Global removeBlurring()");
-            window.removeBlurring();
-        } else {
-            console.log("[Extension] Manual unblur fallback");
 
-            document.querySelectorAll(".promo_div").forEach(el => el.remove());
+        console.log("[Extension] Manual unblur fallback");
 
-            document.querySelectorAll(".text_layer").forEach(el => {
-                el.style.textShadow = el.dataset.initialTextShadow || "none";
-                el.style.color = el.dataset.initialColor || "#000";
-            });
+        document.querySelectorAll(".promo_div").forEach(el => el.remove());
+        document.querySelectorAll(".between_page_portal_root").forEach(el => el.remove());
+        document.querySelectorAll(".text_layer").forEach(el => {
+            el.style.textShadow = el.dataset.initialTextShadow || "none";
+            el.style.color = el.dataset.initialColor || "#000";
+        });
 
-            document.querySelectorAll(".text_layer [style]").forEach(el => {
-                el.style.color = el.dataset.initialColor || "#000";
-            });
+        document.querySelectorAll(".text_layer [style]").forEach(el => {
+            el.style.color = el.dataset.initialColor || "#000";
+        });
 
-            document.querySelectorAll(".image_layer img").forEach(el => {
-                el.style.opacity = el.dataset.initialOpacity || "1";
-            });
+        document.querySelectorAll(".image_layer img").forEach(el => {
+            el.style.opacity = el.dataset.initialOpacity || "1";
+        });
 
-            document.querySelectorAll("._2P_-2J, .blurred, .outer_page").forEach(el =>
-                el.classList.remove("blurred", "_2P_-2J")
-            );
-        }
+        document.querySelectorAll("._2P_-2J, .blurred, .outer_page").forEach(el =>
+            el.classList.remove("blurred", "_2P_-2J")
+        );
     } catch (err) {
         console.error("[Extension] Unblur script failed:", err);
     }
@@ -105,7 +98,6 @@ function runFullProcess() {
 
         await delay(800);
 
-        clickFullscreenButton();
         zoomOutThreeTimes();
         unblurDocument();
         await delay(1000);
@@ -147,13 +139,30 @@ function runFullProcess() {
     // Click fullscreen button
     function clickFullscreenButton() {
         const btn = document.querySelector('button[data-e2e="full-screen-icon"]');
-        if (btn) {
+
+        if (!btn) {
+            console.warn("❌ Fullscreen button not found");
+            return;
+        }
+
+        // Find the visually hidden <span> inside the button
+        const labelSpan = btn.querySelector('span[style*="position: absolute"]');
+
+        if (!labelSpan) {
+            console.warn("❌ Label span not found inside fullscreen button");
+            return;
+        }
+
+        const labelText = labelSpan.textContent.trim().toLowerCase();
+
+        if (labelText === "fullscreen") {
             btn.click();
             console.log("✅ Fullscreen clicked");
         } else {
-            console.warn("❌ Fullscreen button not found");
+            console.log("🛑 Already in fullscreen — no need to click");
         }
     }
+
 
     // Zoom out 3 times with delay
     function zoomOutThreeTimes() {
@@ -171,41 +180,34 @@ function runFullProcess() {
     // Remove blurring overlays
     function unblurDocument() {
         try {
-            if (window.DocumentManager?.prototype?.removeBlurring) {
-                console.log("[Extension] Native removeBlurring()");
-                const docManager = new window.DocumentManager();
-                docManager.removeBlurring();
-            } else if (typeof window.removeBlurring === "function") {
-                console.log("[Extension] Global removeBlurring()");
-                window.removeBlurring();
-            } else {
-                console.log("[Extension] Manual unblur fallback");
 
-                document.querySelectorAll(".promo_div").forEach(el => el.remove());
+            console.log("[Extension] Manual unblur fallback");
 
-                document.querySelectorAll(".text_layer").forEach(el => {
-                    el.style.textShadow = el.dataset.initialTextShadow || "none";
-                    el.style.color = el.dataset.initialColor || "#000";
-                });
+            document.querySelectorAll(".promo_div").forEach(el => el.remove());
+            document.querySelectorAll(".between_page_portal_root").forEach(el => el.remove());
+            document.querySelectorAll(".text_layer").forEach(el => {
+                el.style.textShadow = el.dataset.initialTextShadow || "none";
+                el.style.color = el.dataset.initialColor || "#000";
+            });
 
-                document.querySelectorAll(".text_layer [style]").forEach(el => {
-                    el.style.color = el.dataset.initialColor || "#000";
-                });
+            document.querySelectorAll(".text_layer [style]").forEach(el => {
+                el.style.color = el.dataset.initialColor || "#000";
+            });
 
-                document.querySelectorAll(".image_layer img").forEach(el => {
-                    el.style.opacity = el.dataset.initialOpacity || "1";
-                });
+            document.querySelectorAll(".image_layer img").forEach(el => {
+                el.style.opacity = el.dataset.initialOpacity || "1";
+            });
 
-                document.querySelectorAll("._2P_-2J, .blurred, .outer_page").forEach(el =>
-                    el.classList.remove("blurred", "_2P_-2J")
-                );
-            }
+            document.querySelectorAll("._2P_-2J, .blurred, .outer_page").forEach(el =>
+                el.classList.remove("blurred", "_2P_-2J")
+            );
+
         } catch (err) {
             console.error("[Extension] Unblur script failed:", err);
         }
     }
 
-  async  function applyPrintStylesAndPrint() {
+    async function applyPrintStylesAndPrint() {
         const style = document.createElement("style");
         style.innerHTML = `
     ._2P_-2J { opacity: 1 !important; }
@@ -216,7 +218,9 @@ function runFullProcess() {
     }
   `;
         document.head.appendChild(style);
+
         await delay(300)
+
         window.print()
 
 
