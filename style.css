@@ -1,0 +1,79 @@
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 16px;
+        width: 250px;
+        background: #f9f9f9;
+        color: #333;
+      }
+
+      h3 {
+        margin-top: 0;
+        font-size: 1.2rem;
+        text-align: center;
+        color: #444;
+      }
+
+      .button {
+        display: block;
+        width: 100%;
+        padding: 10px 14px;
+        margin-top: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+    #apply_btn{
+        background-color: #ff9800;
+        color: white;
+    }
+
+      #apply_btn:hover {
+        background-color: #fb8c00;
+      }
+
+      #logDomBtn, #unblur {
+        background-color: #f44336;
+        color: white;
+      }
+
+      #logDomBtn:hover, #unblur:hover {
+        background-color: #e53935;
+      }
+
+      #logDomBtn {
+        margin-top: 10px;
+}
+      #logDomBtn {
+        background-color: #4caf50;
+        color: white;
+      }
+
+      #logDomBtn:hover {
+        background-color: #43a047;
+      }
+
+      #unblur {
+        background-color: #2196f3;
+        color: white;
+      }
+
+      #unblur:hover {
+        background-color: #1e88e5;
+      }
+
+      footer {
+        margin-top: 16px;
+        font-size: 11px;
+        text-align: center;
+        color: #aaa;
+      }
