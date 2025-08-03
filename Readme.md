@@ -2,6 +2,11 @@
 
 A powerful Chrome extension crafted to enhance your experience on content-heavy platforms like **Scribd**, **Studocu**, and similar document-based websites. This tool simplifies content interaction by offering two key features:
 
+## 📹 Demo Video
+
+[![Watch the Demo](https://img.youtube.com/vi/K-BKsvsC8Ek/0.jpg)](https://www.youtube.com/watch?v=K-BKsvsC8Ek)
+
+
 - 🖨️ **Print Cleaner Pages**
 - 🔓 **Unblur Hidden Content**
 

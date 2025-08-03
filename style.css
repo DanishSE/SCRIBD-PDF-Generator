@@ -63,12 +63,12 @@
       }
 
       #unblur {
-        background-color: #2196f3;
-        color: white;
+        background-color: #8dc7f7;
+        color: #3a3a3a;
       }
 
       #unblur:hover {
-        background-color: #1e88e5;
+        background-color: #61a9e7;
       }
 
       footer {

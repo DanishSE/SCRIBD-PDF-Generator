@@ -77,7 +77,7 @@ function unblurDocument() {
 
 function runFullProcess() {
     console.log("🔁 Running full automation process...");
-    clickFullscreenButton()
+    existFullscreenButton()
     // Scroll to bottom then top with delay
     async function scrollPageSequence() {
         console.log("🔁 Running full automation process...");
@@ -96,8 +96,10 @@ function runFullProcess() {
         // Scroll back to top again slowly
         window.scrollTo({ top: 0, behavior: "smooth" });
 
-        await delay(800);
-
+        await delay(500);
+        // Click fullscreen button
+        clickFullscreenButton();
+        await delay(200);
         zoomOutThreeTimes();
         unblurDocument();
         await delay(1000);
@@ -135,6 +137,38 @@ function runFullProcess() {
         });
     }
 
+    function existFullscreenButton() {
+        const btn = document.querySelector('button[data-e2e="full-screen-icon"]');
+
+        if (!btn) {
+            console.warn("❌ Fullscreen button not found");
+            return;
+        }
+        // Find the visually hidden <span> inside the button
+        const labelSpan = btn.querySelectorAll('span');
+
+        if (!labelSpan) {
+            console.warn("❌ Label span not found inside fullscreen button");
+            return;
+        }
+
+        let isFullscreen = true;
+
+        labelSpan.forEach(span => {
+            if (span.textContent.trim()) {
+                if (span.textContent.trim().toLowerCase() === "fullscreen") {
+                    isFullscreen = false;
+                }
+            }
+        })
+
+        if (isFullscreen) {
+            btn.click();
+            console.log("✅ Fullscreen clicked");
+        } else {
+            console.log("🛑 Already in fullscreen — no need to click");
+        }
+    }
 
     // Click fullscreen button
     function clickFullscreenButton() {
@@ -146,16 +180,24 @@ function runFullProcess() {
         }
 
         // Find the visually hidden <span> inside the button
-        const labelSpan = btn.querySelector('span[style*="position: absolute"]');
+        const labelSpan = btn.querySelectorAll('span');
 
         if (!labelSpan) {
             console.warn("❌ Label span not found inside fullscreen button");
             return;
         }
 
-        const labelText = labelSpan.textContent.trim().toLowerCase();
+        let isFullscreen = true;
 
-        if (labelText === "fullscreen") {
+        labelSpan.forEach(span => {
+            if (span.textContent.trim()) {
+                if (span.textContent.trim().toLowerCase() === "fullscreen") {
+                    isFullscreen = false;
+                }
+            }
+        })
+
+        if (!isFullscreen) {
             btn.click();
             console.log("✅ Fullscreen clicked");
         } else {
