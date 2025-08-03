@@ -1,5 +1,9 @@
-document.getElementById("apply_btn").addEventListener("click", async () => {
+const apply_btn = document.getElementById("apply_btn");
+apply_btn.addEventListener("click", async () => {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+    apply_btn.disabled = true; // Disable button to prevent multiple clicks
+    apply_btn.textContent = "Processing...";
 
     chrome.scripting.executeScript({
         target: { tabId: tab.id },
@@ -7,14 +11,14 @@ document.getElementById("apply_btn").addEventListener("click", async () => {
     });
 });
 
-document.getElementById("print").addEventListener("click", async () => {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-
-    chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        func: applyPrintStylesAndPrint
-    });
-});
+// document.getElementById("print").addEventListener("click", async () => {
+//     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+//
+//     chrome.scripting.executeScript({
+//         target: { tabId: tab.id },
+//         func: applyPrintStylesAndPrint
+//     });
+// });
 
 document.getElementById("unblur").addEventListener("click", async () => {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -80,23 +84,26 @@ function unblurDocument() {
 
 function runFullProcess() {
     console.log("🔁 Running full automation process...");
-
+    clickFullscreenButton()
     // Scroll to bottom then top with delay
     async function scrollPageSequence() {
-        window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-
         console.log("🔁 Running full automation process...");
 
-        function delay(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-
-
-        window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-        await delay(1000);
-
         window.scrollTo({ top: 0, behavior: "smooth" });
-        await delay(1000);
+
+
+        // Wait a bit
+        await delay(800);
+
+        // Scroll to bottom slowly
+        await smoothScrollTo(document.body.scrollHeight, 20);
+
+        await delay(500);
+
+        // Scroll back to top again slowly
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
+        await delay(800);
 
         clickFullscreenButton();
         zoomOutThreeTimes();
@@ -107,6 +114,35 @@ function runFullProcess() {
         applyPrintStylesAndPrint();
 
     }
+
+    function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function smoothScrollTo(targetY, stepDelay = 10) {
+        const step = window.scrollY < targetY ? 120 : -120;
+        const tolerance = 20; // Allow small margin to treat as "done"
+
+        return new Promise(resolve => {
+            const interval = setInterval(() => {
+                const currentY = window.scrollY;
+                const distance = Math.abs(currentY - targetY);
+
+                // Stop if close enough or reached limit
+                if (distance <= tolerance ||
+                    (step > 0 && currentY + window.innerHeight >= document.body.scrollHeight) ||
+                    (step < 0 && currentY <= 0)
+                ) {
+                    clearInterval(interval);
+                    resolve();
+                    return;
+                }
+
+                window.scrollBy(0, step);
+            }, stepDelay);
+        });
+    }
+
 
     // Click fullscreen button
     function clickFullscreenButton() {
@@ -169,7 +205,7 @@ function runFullProcess() {
         }
     }
 
-    function applyPrintStylesAndPrint() {
+  async  function applyPrintStylesAndPrint() {
         const style = document.createElement("style");
         style.innerHTML = `
     ._2P_-2J { opacity: 1 !important; }
@@ -180,8 +216,14 @@ function runFullProcess() {
     }
   `;
         document.head.appendChild(style);
+        await delay(300)
+        window.print()
 
-        setTimeout(() => window.print(), 300);
+
+        window.onafterprint = () => {
+            chrome.runtime.sendMessage({ type: "PRINT_DONE" });
+
+        };
     }
 
     scrollPageSequence();
